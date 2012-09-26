@@ -3,7 +3,7 @@ module Embarista
     class RewriteMinispadeRequiresFilter < Rake::Pipeline::Filter
       attr_reader :options
 
-      def initialize(options, &block)
+      def initialize(options=nil, &block)
         @options = options || {}
         @options[:prefix] = '' unless @options.has_key?(:prefix)
         super(&block)
