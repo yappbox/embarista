@@ -1,5 +1,5 @@
-require "pry"
-require "embarista"
+require 'pry'
+require 'embarista'
 
 class Rake::Pipeline
   module SpecHelpers
