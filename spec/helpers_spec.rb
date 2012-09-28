@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Embarista::Helpers do
   let(:pipeline) { Rake::Pipeline.new }
   let(:dsl) { Rake::Pipeline::DSL::PipelineDSL.new(pipeline) }

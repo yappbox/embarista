@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Embarista::Filters::StripEmberAssertsFilter do
   MemoryFileWrapper = Rake::Pipeline::SpecHelpers::MemoryFileWrapper
 

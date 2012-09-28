@@ -1,3 +1,5 @@
+require 'spec_helper'
+
 describe Embarista::Filters::RewriteMinispadeRequiresFilter do
   MemoryFileWrapper = Rake::Pipeline::SpecHelpers::MemoryFileWrapper
 
