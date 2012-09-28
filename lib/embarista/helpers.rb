@@ -1,6 +1,3 @@
-require "embarista/filters"
-require "embarista/javascript_pipeline"
-
 module Embarista
   module Helpers
     def precompile_handlebars(*args, &block)

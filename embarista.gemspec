@@ -1,3 +1,5 @@
+require File.expand_path('../lib/embarista/version', __FILE__)
+
 Gem::Specification.new do |gem|
   gem.authors       = ["Luke Melia", "Kris Selden"]
   gem.email         = ["tech@yapp.us"]
@@ -10,7 +12,7 @@ Gem::Specification.new do |gem|
   gem.test_files    = `git ls-files -- spec/*`.split("\n")
   gem.name          = "embarista"
   gem.require_paths = ["lib"]
-  gem.version       = 1.0
+  gem.version       = Embarista::VERSION
 
   gem.add_dependency "rake-pipeline-web-filters"
 

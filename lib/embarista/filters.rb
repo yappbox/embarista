@@ -1,4 +1,10 @@
-require 'embarista/filters/strip_ember_asserts_filter'
-require 'embarista/filters/erb_filter'
-require 'embarista/filters/rewrite_minispade_requires_filter'
-require 'embarista/filters/precompile_handlebars_filter'
+require "rake-pipeline-web-filters"
+
+module Embarista
+  module Filters
+    autoload :ErbFilter,                      'embarista/filters/erb_filter'
+    autoload :StripEmberAssertsFilter,        'embarista/filters/strip_ember_asserts_filter'
+    autoload :PrecompileHandlebarsFilter,     'embarista/filters/precompile_handlebars_filter'
+    autoload :RewriteMinispadeRequiresFilter, 'embarista/filters/rewrite_minispade_requires_filter'
+  end
+end
