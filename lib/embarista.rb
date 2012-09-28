@@ -3,5 +3,7 @@ module Embarista
   autoload :Filters, 'embarista/filters'
   autoload :Version, 'embarista/version'
 
-  autoload :JavascrptPipeline, 'embarista/javascript_pipeline'
+  autoload :JavascriptPipeline, 'embarista/javascript_pipeline'
 end
+
+Rake::Pipeline::DSL::PipelineDSL.send(:include, Embarista::Helpers)

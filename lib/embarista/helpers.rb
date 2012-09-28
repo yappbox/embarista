@@ -55,4 +55,3 @@ module Embarista
   end
 end
 
-Rake::Pipeline::DSL::PipelineDSL.send(:include, Embarista::Helpers)
