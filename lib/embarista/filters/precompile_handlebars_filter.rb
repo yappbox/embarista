@@ -71,6 +71,9 @@ module Embarista
         self.class.emberjs_path = options[:emberjs]
         self.class.handlebarsjs_path = options[:handlebarsjs]
         self.class.jquery_version = options[:jquery_version]
+
+        @template_dir = options[:template_dir] || 'templates'
+
         super(&block)
         unless block_given?
           @output_name_generator = proc { |input| input.sub(/\.handlebars$/, '.js') }
@@ -81,8 +84,14 @@ module Embarista
       def generate_output(inputs, output)
         inputs.each do |input|
           name = File.basename(input.path, '.handlebars')
+          dirname = File.dirname(input.path)
+
+          dirname.gsub!(/^\/?#{@template_dir}\/?/,'')
+
+          full_name = [dirname, name].compact.reject(&:empty?).join('/')
+
           compiled = self.class.context.call("precompileEmberHandlebars", input.read)
-          output.write "\nEmber.TEMPLATES['#{name}'] = Ember.Handlebars.template(#{compiled});\n"
+          output.write "\nEmber.TEMPLATES['#{full_name}'] = Ember.Handlebars.template(#{compiled});\n"
         end
       end
 
