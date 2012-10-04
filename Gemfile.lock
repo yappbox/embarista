@@ -17,7 +17,8 @@ GIT
 PATH
   remote: .
   specs:
-    embarista (1.0)
+    embarista (1.0.0)
+      rake-pipeline
       rake-pipeline-web-filters
 
 GEM

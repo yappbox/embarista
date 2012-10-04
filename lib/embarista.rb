@@ -1,3 +1,5 @@
+require 'rake-pipeline'
+
 module Embarista
   autoload :Helpers, 'embarista/helpers'
   autoload :Filters, 'embarista/filters'

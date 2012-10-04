@@ -14,6 +14,7 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Embarista::VERSION
 
+  gem.add_dependency "rake-pipeline"
   gem.add_dependency "rake-pipeline-web-filters"
 
   gem.add_development_dependency "rspec"
