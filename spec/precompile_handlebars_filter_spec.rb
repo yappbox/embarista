@@ -14,7 +14,7 @@ HBS
 
   let(:input_files) {
     [
-      MemoryFileWrapper.new("/path/to/input", "foo.handlebars", "UTF-8", input_hbs)
+      MemoryFileWrapper.new("/path/to/input", "templates/bar/foo.handlebars", "UTF-8", input_hbs)
     ]
   }
 
@@ -41,11 +41,11 @@ HBS
     tasks = subject.generate_rake_tasks
     tasks.each(&:invoke)
 
-    file = MemoryFileWrapper.files["/path/to/output/foo.js"]
+    file = MemoryFileWrapper.files["/path/to/output/templates/bar/foo.js"]
 
     file.should_not be_nil
     file.body.should_not be_nil
-    file.body.should match(/^Ember\.TEMPLATES\[\'foo\'\] = Ember\.Handlebars\.template\(.*\"Hello \".*\"foo\"/m)
+    file.body.should match(/^Ember\.TEMPLATES\[\'bar\/foo\'\] = Ember\.Handlebars\.template\(.*\"Hello \".*\"foo\"/m)
     file.encoding.should eq('UTF-8')
   end
 end
