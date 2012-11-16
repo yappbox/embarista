@@ -37,6 +37,10 @@ module Embarista
       end
     end
 
+    def after_build(&block)
+      @after_build = block
+    end
+
     def call(env)
       builder.call(env)
     end
@@ -110,6 +114,10 @@ module Embarista
       @test_resource ||= ConditionVariable.new
     end
 
+    def run_after_build_callbacks
+
+    end
+
     def create_build_proc
       lambda {|modified, added, removed|
         success = true
@@ -146,6 +154,7 @@ module Embarista
               }) rescue nil
             end
           end
+          @after_build.call if @after_build
           puts "FINISHED #{Time.now.to_i - start.to_i} seconds"
         }
         # after UNLOCK
