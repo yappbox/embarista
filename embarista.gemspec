@@ -14,8 +14,8 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Embarista::VERSION
 
-  gem.add_dependency "rake-pipeline"
-  gem.add_dependency "rake-pipeline-web-filters"
+  gem.add_dependency "rake-pipeline", '~> 0.6.0'
+  gem.add_dependency "rake-pipeline-web-filters", '~> 0.6.0'
   gem.add_dependency "ruby_gntp"
   gem.add_dependency "listen"
   gem.add_dependency "colored"
