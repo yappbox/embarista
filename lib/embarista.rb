@@ -6,6 +6,7 @@ module Embarista
   autoload :Version, 'embarista/version'
 
   autoload :JavascriptPipeline, 'embarista/javascript_pipeline'
+  autoload :Server, 'embarista/server'
 end
 
 Rake::Pipeline::DSL::PipelineDSL.send(:include, Embarista::Helpers)
