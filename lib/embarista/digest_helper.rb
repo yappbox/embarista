@@ -1,5 +1,6 @@
 module Embarista
   module DigestHelper
+    include FileUtils
     extend self
 
     def digest_and_copy_file(filename, target_dir = 'tmp')
