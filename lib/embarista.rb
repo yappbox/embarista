@@ -7,6 +7,11 @@ module Embarista
 
   autoload :JavascriptPipeline, 'embarista/javascript_pipeline'
   autoload :Server, 'embarista/server'
+
+  autoload :Git,          'embarista/git'
+  autoload :S3sync,       'embarista/s3sync'
+  autoload :DigestHelper, 'embarista/digest_helper'
+  autoload :ManifestHelper, 'embarista/manifest_helper'
 end
 
 Rake::Pipeline::DSL::PipelineDSL.send(:include, Embarista::Helpers)
