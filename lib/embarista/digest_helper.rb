@@ -6,7 +6,7 @@ module Embarista
       file = Pathname.new(filename)
       target_dir = Pathname.new(target_dir)
 
-      md5 = `md5 -q '#{file}'`.chomp
+      md5 = Digest::MD5.file(file).hexdigest
       ext = file.extname
       dirname = file.dirname
       name_without_ext = file.basename.to_s.gsub(/#{ext}$/,'')
