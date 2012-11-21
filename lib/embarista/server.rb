@@ -52,7 +52,7 @@ module Embarista
         pipeline.rake_application = Rake.application
         pipeline.setup
       end
-      project.invoke_clean if clean_on_startup
+      project.invoke if clean_on_startup
     end
 
     def start_watching
@@ -130,7 +130,7 @@ module Embarista
           if added.size > 0 || removed.size > 0
             puts "BUILD (CLEAN) #{start}"
             begin
-              project.invoke_clean
+              project.invoke
             rescue
               success = false
               puts "ERROR: #{$!.inspect}"
