@@ -1,8 +1,6 @@
 require 'spec_helper'
 
 describe Embarista::Filters::StripEmberAssertsFilter do
-  MemoryFileWrapper = Rake::Pipeline::SpecHelpers::MemoryFileWrapper
-
   let(:file_wrapper_class) { MemoryFileWrapper }
 
   let(:input_js) {
@@ -31,6 +29,8 @@ JS
   let(:subject) {
     filter = described_class.new
     filter.file_wrapper_class = file_wrapper_class
+    filter.manifest = MemoryManifest.new
+    filter.last_manifest = MemoryManifest.new
     filter.input_files = input_files
     filter.output_root = output_root
     filter.rake_application = rake_application

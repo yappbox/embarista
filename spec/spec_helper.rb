@@ -1,45 +1,26 @@
 require 'pry'
 require 'embarista'
+require 'fileutils'
 
-class Rake::Pipeline
-  module SpecHelpers
-
-    class MemoryFileWrapper < Struct.new(:root, :path, :encoding, :body)
-      @@files = {}
-      @@data = {}
-
-      def self.files
-        @@files
-      end
-
-      def self.data
-        @@data
-      end
-
-      def with_encoding(new_encoding)
-        self.class.new(root, path, new_encoding, body)
-      end
-
-      def fullpath
-        File.join(root, path)
-      end
-
-      def create
-        @@files[fullpath] = self
-        self.body = ""
-        yield
-      end
-
-      def read
-        body || @@data[fullpath] || ""
-      end
-
-      def write(contents)
-        self.body << contents
-      end
-    end
-  end
-end
+require "spec_helpers/memory_file_wrapper"
+require "spec_helpers/memory_manifest"
 
 RSpec.configure do |config|
+  original = Dir.pwd
+
+  config.include FileUtils
+
+  def tmp
+    File.expand_path("../tmp", __FILE__)
+  end
+
+  config.before do
+    rm_rf(tmp)
+    mkdir_p(tmp)
+    Dir.chdir(tmp)
+  end
+
+  config.after do
+    Dir.chdir(original)
+  end
 end

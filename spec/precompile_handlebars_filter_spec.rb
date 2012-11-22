@@ -2,8 +2,6 @@ require 'spec_helper'
 require 'execjs'
 
 describe Embarista::Filters::PrecompileHandlebarsFilter do
-  MemoryFileWrapper = Rake::Pipeline::SpecHelpers::MemoryFileWrapper
-
   let(:file_wrapper_class) { MemoryFileWrapper }
 
   let(:input_hbs) {
@@ -31,6 +29,8 @@ HBS
   let(:subject) {
     filter = described_class.new(:emberjs => emberjs, :handlebarsjs => handlebarsjs, :jquery_version => jquery_version)
     filter.file_wrapper_class = file_wrapper_class
+    filter.manifest = MemoryManifest.new
+    filter.last_manifest = MemoryManifest.new
     filter.input_files = input_files
     filter.output_root = output_root
     filter.rake_application = rake_application
