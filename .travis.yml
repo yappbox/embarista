@@ -1,0 +1,7 @@
+language: ruby
+rvm:
+  - 1.9.2
+bundler_args: --without docs
+notifications:
+  tech@yapp.us
+script: bundle exec rake ci
