@@ -8,3 +8,4 @@ gem 'debugger'
 gem 'pry'
 gem 'pry-debugger'
 gem 'pry-remote'
+gem 'aws-s3'                # Uploading data to S3
