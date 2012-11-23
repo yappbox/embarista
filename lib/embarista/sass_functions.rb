@@ -16,11 +16,14 @@ module Embarista
     end
 
     def lookup_manifest_path(path)
-      return path unless use_manifest?
-      manifest[path.value] or path
+      if digest?
+        manifest.fetch(path.value)
+      else
+        path
+      end
     end
 
-    def use_manifest?
+    def digest?
       ENV.key?('RAKEP_DIGEST')
     end
   end
