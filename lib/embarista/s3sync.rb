@@ -2,9 +2,9 @@ module Embarista
   class S3sync
     attr_reader :origin, :bucket_name, :pwd, :tmp_root, :manifest_path
 
-    def initialize(origin, options) 
+    def initialize(origin, options)
       bucket_name = options.fetch(:bucket_name)
-      manifest_path = options.fetch(:manifest_path)
+      manifest_path = options[:manifest_path] || "tmp/public/manifest-latest.yml"
       aws_key = options.fetch(:aws_key)
       aws_secret = options.fetch(:aws_secret)
 
@@ -44,8 +44,12 @@ module Embarista
       end
 
       open(manifest_path) do |file|
-        store('manifest-latest.yml', file)
+        store(manifest_file_name, file)
       end
+    end
+
+    def manifest_file_name
+      File.basename(manifest_path)
     end
 
     def build_delta_manifest
@@ -56,13 +60,13 @@ module Embarista
     end
 
     def remote_manifest
-      @remote_manifest ||= YAML.load(AWS::S3::S3Object.find('manifest-latest.yml', bucket_name).value)
+      @remote_manifest ||= YAML.load(AWS::S3::S3Object.find(manifest_file_name, bucket_name).value)
     rescue AWS::S3::NoSuchKey
       puts 'no remote existing manifest, uploading everything'
     end
 
     def local_manifest
-      @local_manifest ||= YAML.load_file('public/manifest.yml')
+      @local_manifest ||= YAML.load_file(manifest_path)
     end
   end
 end
