@@ -44,7 +44,12 @@ module Embarista
           YAML.dump(manifest_hash, file)
         end
 
+        open('manifest.json', 'w') do |file|
+          JSON.dump(manifest_hash, file)
+        end
+
         cp('manifest.yml', target_base_dir + 'manifest-latest.yml')
+        cp('manifest.json', target_base_dir + 'manifest-latest.json')
 
         return manifest_hash
       end
