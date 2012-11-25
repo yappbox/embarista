@@ -59,11 +59,10 @@ module Embarista
 
     def compressed_open(file_name)
       if should_gzip?(file_name)
-        contents = IO.read(tmp_root.to_s + file_name)
         str_io = StringIO.new
-        gz = Zlib::GzipWriter.new(str_io, Zlib::BEST_COMPRESSION)
-        gz.write(contents)
-        gz.close
+        open(tmp_root.to_s + file_name) do |f|
+          streaming_deflate(f, str_io)
+        end
         str_io.reopen(str_io.string, "r")
         yield str_io
         str_io.close
@@ -72,6 +71,14 @@ module Embarista
           yield f
         end
       end
+    end
+
+    def streaming_deflate(source_io, target_io, buffer_size = 4 * 1024)
+      gz = Zlib::GzipWriter.new(target_io, Zlib::BEST_COMPRESSION)
+      while(string = source_io.read(buffer_size)) do
+        gz.write(string)
+      end
+      gz.close
     end
 
     def should_gzip?(name)
