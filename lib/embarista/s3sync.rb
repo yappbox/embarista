@@ -26,7 +26,7 @@ module Embarista
 
     def store(name, file)
       puts " -> #{name}"
-      AWS::S3::S3Object.store(name, file, bucket_name)
+      AWS::S3::S3Object.store(name, file, bucket_name, access: :public_read)
     end
 
     def sync
