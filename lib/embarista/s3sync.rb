@@ -26,8 +26,17 @@ module Embarista
 
     def store(name, file)
       puts " -> #{name}"
-      AWS::S3::S3Object.store(name, file, bucket_name, access: :public_read)
+
+      encoding = nil
+      if should_gzip?(name)
+        encoding = "gzip"
+      end
+
+      AWS::S3::S3Object.store(name, file, bucket_name,
+                              content_encoding: encoding,
+                              access: :public_read)
     end
+
 
     def sync
       delta_manifest = build_delta_manifest
@@ -38,7 +47,7 @@ module Embarista
       end
 
       delta_manifest.values.each do |file_name|
-        open(tmp_root.to_s + file_name) do |file|
+        compressed_open(file_name) do |file|
           store(file_name, file)
         end
       end
@@ -46,6 +55,27 @@ module Embarista
       open(manifest_path) do |file|
         store(manifest_file_name, file)
       end
+    end
+
+    def compressed_open(file_name)
+      if should_gzip?(file_name)
+        contents = IO.read(tmp_root.to_s + file_name)
+        str_io = StringIO.new
+        gz = Zlib::GzipWriter.new(str_io, Zlib::BEST_COMPRESSION)
+        gz.write(contents)
+        gz.close
+        str_io.reopen(str_io.string, "r")
+        yield str_io
+        str_io.close
+      else
+        open(tmp_root.to_s + file_name) do |f|
+          yield f
+        end
+      end
+    end
+
+    def should_gzip?(name)
+      name =~ /\.css|\.js\Z/
     end
 
     def manifest_file_name
