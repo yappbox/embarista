@@ -33,7 +33,7 @@ module Embarista
 
       cd(origin) do
         glob_pattern_with_symlink_support = "**{,/*/**}/*.*" # http://stackoverflow.com/questions/357754/can-i-traverse-symlinked-directories-in-ruby-with-a-glob
-        files = Dir.glob(glob_pattern_with_symlink_support).reject { |file| File.directory?(file) }.reject { |file| file =~ /manifest*\.yml/ }
+        files = Dir.glob(glob_pattern_with_symlink_support).reject { |file| File.directory?(file) }.reject { |file| file =~ /manifest*\.(yml|json)/ }
 
         manifest_hash = files.each_with_object({}) do |file, manifest|
           manifest[file.to_s] = digest_and_copy_file(file, target_base_dir).to_s
