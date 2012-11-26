@@ -3,16 +3,17 @@ module Embarista
     include FileUtils
     extend self
 
-    def digest_and_copy_file(filename, target_dir = 'tmp')
+    def digest_and_copy_file(filename, target_dir = 'tmp', version=nil)
       file = Pathname.new(filename)
       target_dir = Pathname.new(target_dir)
 
       md5 = Digest::MD5.file(file).hexdigest
       ext = file.extname
       dirname = file.dirname
-      name_without_ext = file.basename.to_s.gsub(/#{ext}$/,'')
+      name_without_ext = file.basename.to_s.chomp(ext)
 
-      new_filename = "#{name_without_ext}-#{md5}#{ext}"
+      version_suffix = "-#{version}" if version
+      new_filename = "#{name_without_ext}#{version_suffix}-#{md5}#{ext}"
       target_dir_with_path = target_dir + dirname
       target_full_path = target_dir_with_path + new_filename
 
@@ -22,7 +23,7 @@ module Embarista
       return dirname + new_filename
     end
 
-    def digest_directory(origin, target)
+    def digest_directory(origin, target, version=nil)
       origin = Pathname.new(origin).expand_path
       target = Pathname.new(target).expand_path
 
@@ -36,7 +37,7 @@ module Embarista
         files = Dir.glob(glob_pattern_with_symlink_support).reject { |file| File.directory?(file) }.reject { |file| file =~ /manifest*\.(yml|json)/ }
 
         manifest_hash = files.each_with_object({}) do |file, manifest|
-          manifest[file.to_s] = digest_and_copy_file(file, target_base_dir).to_s
+          manifest[file.to_s] = digest_and_copy_file(file, target_base_dir, version).to_s
         end
 
         manifest_hash = ManifestHelper.prefix_manifest('/', manifest_hash)
