@@ -26,14 +26,15 @@ module Embarista
     def store(name, file)
       puts " -> #{name}"
 
-      encoding = nil
+      opts = {
+        access: :public_read
+      }
+
       if should_gzip?(name)
-        encoding = "gzip"
+        opts[:content_encoding] = 'gzip'
       end
 
-      AWS::S3::S3Object.store(name, file, bucket_name,
-                              content_encoding: encoding,
-                              access: :public_read)
+      AWS::S3::S3Object.store(name, file, bucket_name, opts)
     end
 
 
