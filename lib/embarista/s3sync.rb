@@ -3,7 +3,7 @@ module Embarista
     attr_reader :origin, :bucket_name, :pwd, :tmp_root, :manifest_path
 
     def initialize(origin, options)
-      bucket_name = options.fetch(:bucket_name)
+      @bucket_name = options.fetch(:bucket_name)
       manifest_path = options[:manifest_path] || "tmp/public/manifest-latest.yml"
       aws_key = options.fetch(:aws_key)
       aws_secret = options.fetch(:aws_secret)
@@ -15,7 +15,6 @@ module Embarista
 
       @pwd = Pathname.new('').expand_path
       @origin = origin
-      @bucket_name = bucket_name
       @tmp_root = @pwd + @origin
       @manifest_path = manifest_path
     end
