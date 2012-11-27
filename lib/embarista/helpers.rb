@@ -1,7 +1,7 @@
 module Embarista
   module Helpers
-    def image_manifest_js(*args, &block)
-      filter(Embarista::Filters::ImageManifestFilter, *args, &block)
+    def rewrite_manifest_urls(*args, &block)
+      filter(Embarista::Filters::ManifestUrlFilter, *args, &block)
     end
 
     def precompile_handlebars(*args, &block)
