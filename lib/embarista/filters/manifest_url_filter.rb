@@ -11,7 +11,13 @@ module Embarista
 
       attr_writer :urls_manifest
       def urls_manifest
-        @urls_manifest ||= JSON.parse(IO.read(options[:path]))
+        @urls_manifest ||= begin
+          if File.exists?(options[:path])
+            JSON.parse(IO.read(options[:path]))
+          else
+            {}
+          end
+        end
       end
 
       def generate_output(inputs, output)

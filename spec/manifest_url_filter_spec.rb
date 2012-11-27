@@ -62,4 +62,18 @@ var c = ('//' + YappEditorConfig.assetsCdn + '/editor/images/doesnt-exist.jpg');
 JS
     file.encoding.should eq('UTF-8')
   end
+
+  it "gracefully rewrites manifest_url when path is not found" do
+    subject.urls_manifest = nil
+    tasks = subject.generate_rake_tasks
+    tasks.each(&:invoke)
+
+    file = MemoryFileWrapper.files["/path/to/output/foo/bar.js"]
+    file.body.should eq(<<-JS)
+var a = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz.jpg');
+var b = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar.jpg');
+var c = ('//' + YappEditorConfig.assetsCdn + '/editor/images/doesnt-exist.jpg');
+JS
+    file.encoding.should eq('UTF-8')
+  end
 end
