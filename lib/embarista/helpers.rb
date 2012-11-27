@@ -1,5 +1,9 @@
 module Embarista
   module Helpers
+    def image_manifest_js(*args, &block)
+      filter(Embarista::Filters::ImageManifestFilter, *args, &block)
+    end
+
     def precompile_handlebars(*args, &block)
       filter(Embarista::Filters::PrecompileHandlebarsFilter, *args, &block)
     end
