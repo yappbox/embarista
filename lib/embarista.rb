@@ -12,6 +12,7 @@ module Embarista
   autoload :S3sync,          'embarista/s3sync'
   autoload :SassFunctions,   'embarista/sass_functions'
   autoload :ManifestBuilder, 'embarista/manifest_builder'
+  autoload :DynamicIndex,    'embarista/dynamic_index'
 end
 
 Rake::Pipeline::DSL::PipelineDSL.send(:include, Embarista::Helpers)
