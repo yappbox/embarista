@@ -35,6 +35,10 @@ module Embarista
           erb.result(binding)
         end
       end
+
+      def preview_url(app)
+        "https://#{yapp_config.domains.app}/#{app}/?manifest_id=#{manifest_id}"
+      end
     end
 
     class Middleware
@@ -173,7 +177,9 @@ module Embarista
           generator = Embarista::DynamicIndex::Generator.new(erb_path, manifest_id)
           html = generator.html
 
+          puts "redis.set('#{app}:index:#{manifest_id}', '#{html[0,10].strip}...')"
           redis.set("#{app}:index:#{manifest_id}", html)
+          puts "To preview: #{generator.preview_url(app)}"
         end
       end
     end
