@@ -1,10 +1,11 @@
 module Embarista
   class S3sync
-    attr_reader :origin, :bucket_name, :pwd, :tmp_root, :manifest_path
+    attr_reader :origin, :bucket_name, :pwd, :tmp_root, :local_manifest_path, :remote_manifest_path
 
     def initialize(origin, options)
       @bucket_name = options.fetch(:bucket_name)
-      manifest_path = options[:manifest_path] || "tmp/public/manifest-latest.yml"
+      @local_manifest_path = options[:local_manifest_path]
+      @remote_manifest_path = options[:remote_manifest_path]
       aws_key = options.fetch(:aws_key)
       aws_secret = options.fetch(:aws_secret)
 
@@ -16,7 +17,6 @@ module Embarista
       @pwd = Pathname.new('').expand_path
       @origin = origin
       @tmp_root = @pwd + @origin
-      @manifest_path = manifest_path
     end
 
     def self.sync(origin, options)
@@ -52,8 +52,9 @@ module Embarista
         end
       end
 
-      open(manifest_path) do |file|
-        store(manifest_file_name, file)
+      open(local_manifest_path) do |file|
+        store(remote_manifest_file_name, file)
+        store(local_manifest_file_name, file)
       end
     end
 
@@ -85,8 +86,12 @@ module Embarista
       name =~ /\.css|\.js\Z/
     end
 
-    def manifest_file_name
-      File.basename(manifest_path)
+    def remote_manifest_file_name
+      File.basename(remote_manifest_path)
+    end
+
+    def local_manifest_file_name
+      File.basename(local_manifest_path)
     end
 
     def build_delta_manifest
@@ -98,13 +103,13 @@ module Embarista
     end
 
     def remote_manifest
-      @remote_manifest ||= YAML.load(AWS::S3::S3Object.find(manifest_file_name, bucket_name).value)
+      @remote_manifest ||= YAML.load(AWS::S3::S3Object.find(remote_manifest_file_name, bucket_name).value)
     rescue AWS::S3::NoSuchKey
       puts 'no remote existing manifest, uploading everything'
     end
 
     def local_manifest
-      @local_manifest ||= YAML.load_file(manifest_path)
+      @local_manifest ||= YAML.load_file(local_manifest_path)
     end
   end
 end
