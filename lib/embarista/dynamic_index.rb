@@ -180,6 +180,8 @@ module Embarista
           puts "redis.set('#{app}:index:#{manifest_id}', '#{html[0,10].strip}...')"
           redis.set("#{app}:index:#{manifest_id}", html)
           puts "To preview: #{generator.preview_url(app)}"
+          yapp_env = ENV.fetch('YAPP_ENV')
+          puts "To activate:  YAPP_ENV=#{yapp_env} rake deploy:set_current_index[#{manifest_id}]"
         end
       end
     end
