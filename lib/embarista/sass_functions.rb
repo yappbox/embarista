@@ -1,7 +1,10 @@
 module Embarista
   module SassFunctions
     def manifest_url(path)
-      Sass::Script::String.new("url(#{lookup_manifest_path(path)})")
+      path, query_segment = path.value.split('?')
+      query_addition = "?#{query_segment}" if query_segment
+      digested_path = lookup_manifest_path(path)
+      Sass::Script::String.new("url(#{digested_path}#{query_addition})")
     end
 
   private
@@ -17,8 +20,8 @@ module Embarista
 
     def lookup_manifest_path(path)
       if digest?
-        raise ::Sass::SyntaxError.new "manifest-url(#{path.value.inspect}) missing manifest entry" unless manifest.key? path.value
-        manifest[path.value]
+        raise ::Sass::SyntaxError.new "manifest-url(#{path.value.inspect}) missing manifest entry" unless manifest.key? path
+        manifest[path]
       else
         path
       end
