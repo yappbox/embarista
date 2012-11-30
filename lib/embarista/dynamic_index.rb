@@ -78,9 +78,13 @@ module Embarista
           when 'dev'
             "redis://0.0.0.0:6379/"
           when 'qa'
-            `heroku config:get REDISTOGO_URL --app qa-yapp-cedar`.chomp
+            Bundler.with_clean_env do
+              `heroku config:get REDISTOGO_URL --app qa-yapp-cedar`.chomp
+            end
           when 'prod'
-            `heroku config:get REDISTOGO_URL --app yapp-cedar`.chomp
+            Bundler.with_clean_env do
+              `heroku config:get REDISTOGO_URL --app yapp-cedar`.chomp
+            end
           else
             raise "don't know how to get redis connection for #{yapp_env}"
           end
