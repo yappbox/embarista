@@ -93,7 +93,8 @@ module Embarista
       return local_manifest unless remote_manifest
 
       new_manifest_values = local_manifest.values - remote_manifest.values
-      local_manifest.invert.slice(*new_manifest_values).invert
+
+      local_manifest.select {|key, value| new_manifest_values.include? value }
     end
 
     def remote_manifest
