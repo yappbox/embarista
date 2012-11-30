@@ -60,24 +60,57 @@ module Embarista
     end
 
     class Task < ::Rake::TaskLib
-      attr_accessor :name, :erb_path, :output_dir
+      attr_accessor :name, :erb_path, :app
 
       def initialize(name = :generate_index)
         @name = name
         @erb_path = "app/index.html.erb"
-        @output_dir = "tmp"
         yield self if block_given?
+
+        raise 'app must be set' unless @app
         define
+      end
+
+      def redis_url
+        ENV['REDISTOGO_URL'] ||= begin
+          yapp_env = ENV.fetch('YAPP_ENV')
+          redis_url = case yapp_env
+          when 'dev'
+            "redis://0.0.0.0:6379/"
+          when 'qa'
+            `heroku config:get REDISTOGO_URL --app qa-yapp-cedar`.chomp
+          when 'prod'
+            `heroku config:get REDISTOGO_URL --app yapp-cedar`.chomp
+          else
+            raise "don't know how to get redis connection for #{yapp_env}"
+          end
+        end
+      end
+
+      def redis
+        $redis ||= begin
+          require 'uri'
+
+          uri = URI.parse(redis_url)
+
+          Redis.new(
+            :host => uri.host,
+            :port => uri.port,
+            :password => uri.password,
+            :logger => redis_logger
+          )
+        end
       end
 
       def define
         task name, :manifest_id do |t, args|
+          require 'redis'
+
           manifest_id = args[:manifest_id]
-          mkdir_p output_dir
-          File.open("#{output_dir}/index.html", "w") do |f|
-            generator = Embarista::DynamicIndex::Generator.new(erb_path, manifest_id)
-            f.write(generator.html)
-          end
+          generator = Embarista::DynamicIndex::Generator.new(erb_path, manifest_id)
+          html = generator.html
+
+          $redis.set("#{app}:index:#{manifest_id}", html)
         end
       end
     end
