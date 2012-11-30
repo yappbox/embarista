@@ -97,8 +97,7 @@ module Embarista
           Redis.new(
             :host => uri.host,
             :port => uri.port,
-            :password => uri.password,
-            :logger => redis_logger
+            :password => uri.password
           )
         end
       end
