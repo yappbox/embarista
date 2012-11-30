@@ -90,6 +90,7 @@ module Embarista
       def redis
         $redis ||= begin
           require 'uri'
+          require 'redis'
 
           uri = URI.parse(redis_url)
 
@@ -110,7 +111,7 @@ module Embarista
           generator = Embarista::DynamicIndex::Generator.new(erb_path, manifest_id)
           html = generator.html
 
-          $redis.set("#{app}:index:#{manifest_id}", html)
+          redis.set("#{app}:index:#{manifest_id}", html)
         end
       end
     end
