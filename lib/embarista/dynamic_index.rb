@@ -112,6 +112,7 @@ module Embarista
 
           manifest_id = args[:manifest_id]
 
+          puts "redis.set('#{app}:index:current', '#{manifest_id}')"
           redis.set("#{app}:index:current", manifest_id)
         end
       end
