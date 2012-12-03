@@ -17,11 +17,18 @@ module CoffeeLintHelper
       return
     end
 
-    if !File.directory?("node_modules/#{tool}")
-      sh "\"#{npm}\" install #{tool}"
-    end
+    coffeelint = which('coffeelint')
 
-    sh "\"#{node}\" node_modules/#{tool}/bin/#{tool} #{cmd_args}"
+    if coffeelint
+      sh "coffeelint #{cmd_args}"
+
+    else
+      if !File.directory?("node_modules/#{tool}")
+        sh "\"#{npm}\" install #{tool}"
+      end
+
+      sh "\"#{node}\" node_modules/#{tool}/bin/#{tool} #{cmd_args}"
+    end
   end
 
   def self.which(cmd)
