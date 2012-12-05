@@ -3,6 +3,12 @@ require 'rake/tasklib'
 
 module Embarista
   module DynamicIndex
+    # ENV.fetch does not behave as Hash#fetch,
+    # it fails to tell you which key failed.
+    def self.env_fetch(key)
+      ENV[key] or raise KeyError, "key not found: \"#{key}\""
+    end
+
     class Generator
       attr_reader :env_config, :yapp_env, :manifest_id, :yapp_config
 
@@ -10,13 +16,7 @@ module Embarista
         @erb_path = erb_path
         @env_config = Yapp.load_config
 
-        # ENV.fetch does not behave as Hash#fetch,
-        # it fails to tell you which key failed.
-        if yapp_env = ENV['YAPP_ENV']
-          @yapp_env = yapp_env.to_sym
-        else
-          raise KeyError, 'key not found: "YAPP_ENV"'
-        end
+        @yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV').to_sym
 
         @yapp_config = env_config.fetch(@yapp_env)
         @manifest_id = manifest_id
@@ -85,10 +85,11 @@ module Embarista
 
       def redis_url
         ENV['REDISTOGO_URL'] ||= begin
-          yapp_env = ENV.fetch('YAPP_ENV')
-          redis_url = case yapp_env
+          yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV')
+
+          case yapp_env
           when 'dev'
-            "redis://0.0.0.0:6379/"
+            'redis://0.0.0.0:6379/'
           when 'qa'
             Bundler.with_clean_env do
               `heroku config:get REDISTOGO_URL --app qa-yapp-cedar`.chomp
@@ -144,10 +145,11 @@ module Embarista
 
       def redis_url
         ENV['REDISTOGO_URL'] ||= begin
-          yapp_env = ENV.fetch('YAPP_ENV')
-          redis_url = case yapp_env
+          yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV')
+
+          case yapp_env
           when 'dev'
-            "redis://0.0.0.0:6379/"
+            'redis://0.0.0.0:6379/'
           when 'qa'
             Bundler.with_clean_env do
               `heroku config:get REDISTOGO_URL --app qa-yapp-cedar`.chomp
@@ -188,7 +190,7 @@ module Embarista
           puts "redis.set('#{app}:index:#{manifest_id}', '#{html[0,10].strip}...')"
           redis.set("#{app}:index:#{manifest_id}", html)
           puts "To preview: #{generator.preview_url(app)}"
-          yapp_env = ENV.fetch('YAPP_ENV')
+          yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV')
           puts "To activate:  YAPP_ENV=#{yapp_env} rake \"deploy:set_current_index[#{manifest_id}]\""
         end
       end
