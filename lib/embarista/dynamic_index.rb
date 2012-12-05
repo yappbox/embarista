@@ -18,7 +18,7 @@ module Embarista
           raise KeyError, 'key not found: "YAPP_ENV"'
         end
 
-        @yapp_config = env_config.fetch(yapp_env)
+        @yapp_config = env_config.fetch(@yapp_env)
         @manifest_id = manifest_id
         prepare_manifest
       end
