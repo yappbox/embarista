@@ -19,7 +19,7 @@ module Embarista
         @yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV').to_sym
 
         @yapp_config = env_config.fetch(@yapp_env)
-        @manifest_id = manifest_id
+        @manifest_id = manifest_id || @yapp_env
         prepare_manifest
       end
 
@@ -83,9 +83,12 @@ module Embarista
         define
       end
 
+      def yapp_env
+        @yapp_env ||= Embarista::DynamicIndex.env_fetch('YAPP_ENV')
+      end
+
       def redis_url
         ENV['REDISTOGO_URL'] ||= begin
-          yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV')
 
           case yapp_env
           when 'dev'
@@ -123,7 +126,7 @@ module Embarista
         task name, :manifest_id do |t, args|
           require 'redis'
 
-          manifest_id = args[:manifest_id]
+          manifest_id = args[:manifest_id] || yapp_env
 
           puts "redis.set('#{app}:index:current', '#{manifest_id}')"
           redis.set("#{app}:index:current", manifest_id)
@@ -143,9 +146,12 @@ module Embarista
         define
       end
 
+      def yapp_env
+        @yapp_env ||= Embarista::DynamicIndex.env_fetch('YAPP_ENV')
+      end
+
       def redis_url
         ENV['REDISTOGO_URL'] ||= begin
-          yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV')
 
           case yapp_env
           when 'dev'
@@ -183,18 +189,16 @@ module Embarista
         task name, :manifest_id do |t, args|
           require 'redis'
 
-          manifest_id = args[:manifest_id]
+          manifest_id = args[:manifest_id] || yapp_env
           generator = Embarista::DynamicIndex::Generator.new(erb_path, manifest_id)
           html = generator.html
 
           puts "redis.set('#{app}:index:#{manifest_id}', '#{html[0,10].strip}...')"
           redis.set("#{app}:index:#{manifest_id}", html)
           puts "To preview: #{generator.preview_url(app)}"
-          yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV')
           puts "To activate:  YAPP_ENV=#{yapp_env} rake \"deploy:set_current_index[#{manifest_id}]\""
         end
       end
     end
-
   end
 end
