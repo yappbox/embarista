@@ -9,7 +9,15 @@ module Embarista
       def initialize(erb_path, manifest_id)
         @erb_path = erb_path
         @env_config = Yapp.load_config
-        @yapp_env = ENV.fetch('YAPP_ENV').to_sym
+
+        # ENV.fetch does not behave as Hash#fetch,
+        # it fails to tell you which key failed.
+        if yapp_env = ENV['YAPP_ENV']
+          @yapp_env = yapp_env.to_sym
+        else
+          raise KeyError, 'key not found: "YAPP_ENV"'
+        end
+
         @yapp_config = env_config.fetch(yapp_env)
         @manifest_id = manifest_id
         prepare_manifest
