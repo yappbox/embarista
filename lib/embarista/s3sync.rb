@@ -17,6 +17,7 @@ module Embarista
       @pwd = Pathname.new('').expand_path
       @origin = origin
       @tmp_root = @pwd + @origin
+      @age = options[:age] || 31556900
     end
 
     def self.sync(origin, options)
@@ -33,6 +34,9 @@ module Embarista
       if should_gzip?(name)
         opts[:content_encoding] = 'gzip'
       end
+
+      opts[:cache_control] = "max-age=#{@age.to_i}"
+      opts[:expires] = (Time.now + @age).httpdate
 
       AWS::S3::S3Object.store(name, file, bucket_name, opts)
     end
