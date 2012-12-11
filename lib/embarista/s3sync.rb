@@ -38,8 +38,6 @@ module Embarista
       opts[:cache_control] = "max-age=#{@age.to_i}"
       opts[:expires] = (Time.now + @age).httpdate
 
-      opts['Access-Control-Allow-Origin'] = '*'
-
       AWS::S3::S3Object.store(name, file, bucket_name, opts)
     end
 
