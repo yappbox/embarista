@@ -23,7 +23,7 @@ module Embarista
 
     def lookup_manifest_path(path)
       if digest?
-        raise ::Sass::SyntaxError.new "manifest-url(#{path.value.inspect}) missing manifest entry" unless manifest.key? path
+        raise ::Sass::SyntaxError.new "manifest-url(#{path.inspect}) missing manifest entry" unless manifest.key? path
         manifest[path]
       else
         path
