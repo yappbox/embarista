@@ -3,8 +3,8 @@ require 'rake/tasklib'
 
 module Embarista
   module Updater
-
-    def self.update_asset_file(regexp, replacement)
+    extend self
+    def update_asset_file(regexp, replacement)
       assetfile_contents = File.read('Assetfile')
       assetfile_contents.gsub!(regexp, replacement)
       File.open('Assetfile', 'w') do |f|
