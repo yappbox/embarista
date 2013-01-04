@@ -26,24 +26,24 @@ module Embarista
           old_sha, new_sha = nil, nil
           regexp = /ember-([0-9a-f]{40})/
           app_vendor_path = File.expand_path("app/vendor")
-          FileUtils.cd(app_vendor_path) do
+          cd(app_vendor_path) do
             old_filename = Dir['*'].grep(regexp)[0]
             old_filename =~ regexp
             old_sha = $1
           end
           raise "Couldn't find current ember.js version" if old_sha.nil?
-          FileUtils.cd('../ember.js') do
+          cd('../ember.js') do
             new_sha = `git rev-parse HEAD`.chomp
             `bundle && bundle exec rake dist`
-            FileUtils.cd('./dist') do
-              FileUtils.cp('ember.js', "#{app_vendor_path}/ember-#{new_sha}.js")
-              FileUtils.cp('ember.min.js', "#{app_vendor_path}/ember-#{new_sha}.min.js")
+            cd('./dist') do
+              cp('ember.js', "#{app_vendor_path}/ember-#{new_sha}.js")
+              cp('ember.min.js', "#{app_vendor_path}/ember-#{new_sha}.min.js")
             end
           end
           if old_sha != new_sha
-            FileUtils.cd(app_vendor_path) do
-              FileUtils.rm("ember-#{old_sha}.js")
-              FileUtils.rm("ember-#{old_sha}.min.js")
+            cd(app_vendor_path) do
+              rm("ember-#{old_sha}.js")
+              rm("ember-#{old_sha}.min.js")
             end
             update_asset_file(old_sha, new_sha)
           end
@@ -66,24 +66,24 @@ module Embarista
           old_sha, new_sha = nil, nil
           regexp = /ember-data-([0-9a-f]{40})/
           app_vendor_path = File.expand_path("app/vendor")
-          FileUtils.cd(app_vendor_path) do
+          cd(app_vendor_path) do
             old_filename = Dir['*'].grep(regexp)[0]
             old_filename =~ regexp
             old_sha = $1
           end
           raise "Couldn't find current ember-data js version" if old_sha.nil?
-          FileUtils.cd('../ember-data') do
+          cd('../ember-data') do
             new_sha = `git rev-parse HEAD`.chomp
             `bundle && bundle exec rake dist`
-            FileUtils.cd('./dist') do
-              FileUtils.cp('ember-data.js', "#{app_vendor_path}/ember-data-#{new_sha}.js")
-              FileUtils.cp('ember-data.min.js', "#{app_vendor_path}/ember-data-#{new_sha}.min.js")
+            cd('./dist') do
+              cp('ember-data.js', "#{app_vendor_path}/ember-data-#{new_sha}.js")
+              cp('ember-data.min.js', "#{app_vendor_path}/ember-data-#{new_sha}.min.js")
             end
           end
           if old_sha != new_sha
-            FileUtils.cd(app_vendor_path) do
-              FileUtils.rm("ember-data-#{old_sha}.js")
-              FileUtils.rm("ember-data-#{old_sha}.min.js")
+            cd(app_vendor_path) do
+              rm("ember-data-#{old_sha}.js")
+              rm("ember-data-#{old_sha}.min.js")
             end
             update_asset_file(old_sha, new_sha)
           end
