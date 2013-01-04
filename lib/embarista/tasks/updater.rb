@@ -45,7 +45,7 @@ module Embarista
               rm("ember-#{old_sha}.js")
               rm("ember-#{old_sha}.min.js")
             end
-            update_asset_file(old_sha, new_sha)
+            Embarista::Updater.update_asset_file(old_sha, new_sha)
           end
           puts "Updated from #{old_sha} to #{new_sha}"
         end
@@ -85,7 +85,7 @@ module Embarista
               rm("ember-data-#{old_sha}.js")
               rm("ember-data-#{old_sha}.min.js")
             end
-            update_asset_file(old_sha, new_sha)
+            Embarista::Updater.update_asset_file(old_sha, new_sha)
           end
           puts "Updated from #{old_sha} to #{new_sha}"
         end
@@ -111,7 +111,7 @@ module Embarista
             sh "curl -O http://code.jquery.com/jquery-#{version}.js"
             sh "curl -O http://code.jquery.com/jquery-#{version}.min.js"
           end
-          update_asset_file(%r{JQUERY_VERSION = '\d+\.\d+\.\d+'}, "JQUERY_VERSION = '#{version}'")
+          Embarista::Updater.update_asset_file(%r{JQUERY_VERSION = '\d+\.\d+\.\d+'}, "JQUERY_VERSION = '#{version}'")
           puts "Updated to jQuery #{version}"
         end
       end
