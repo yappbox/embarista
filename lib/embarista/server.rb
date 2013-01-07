@@ -70,25 +70,27 @@ module Embarista
     end
 
     def start_testing
-      test_thread = Thread.new do
+      Thread.new do
         while true
           test_mutex.synchronize do
             test_resource.wait(test_mutex)
           end
           puts 'RUNNING TESTS'
-          if system('rake test')
-            GNTP.notify({
-              :app_name => "yapp-dashboard",
-              :title    => "yapp-dashboard error",
-              :text     => "JS test GREEN!"
-            }) rescue nil
+          notification = if system('rake test')
+            {
+              app_name: project_name,
+              title:    "#{project_name} error",
+              text:     'JS test GREEN!'
+            }
           else
-            GNTP.notify({
-              :app_name => "yapp-dashboard",
-              :title    => "yapp-dashboard error",
-              :text     => "JS test RED!"
-            }) rescue nil
+            {
+              app_name: project_name,
+              title:    "#{project_name} error",
+              text:     'JS test RED!'
+            }
           end
+
+          GNTP.notify(notification) rescue nil
         end
       end
     end
