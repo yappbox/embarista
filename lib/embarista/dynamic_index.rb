@@ -10,12 +10,15 @@ module Embarista
     end
 
     class Generator
+      #TODO: remove YAPP reference
       attr_reader :env_config, :yapp_env, :manifest_id, :yapp_config
 
       def initialize(erb_path, manifest_id)
         @erb_path = erb_path
+        #TODO: remove YAPP reference
         @env_config = Yapp.load_config
 
+        #TODO: remove YAPP reference
         @yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV').to_sym
 
         @yapp_config = env_config.fetch(@yapp_env)
