@@ -16,6 +16,7 @@ Gem::Specification.new do |gem|
 
   gem.add_dependency "rake-pipeline", '> 0.6.0'
   gem.add_dependency "rake-pipeline-web-filters", '>= 0.6.0'
+  gem.add_dependency "barber"
   gem.add_dependency "ruby_gntp"
   gem.add_dependency "listen"
   gem.add_dependency "colored"
