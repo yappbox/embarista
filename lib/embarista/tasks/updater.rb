@@ -34,7 +34,9 @@ module Embarista
           raise "Couldn't find current ember.js version" if old_sha.nil?
           cd('../ember.js') do
             new_sha = `git rev-parse HEAD`.chomp
-            `bundle && bundle exec rake dist`
+            Bundler.with_clean_env do
+              `bundle && bundle exec rake dist`
+            end
             cd('./dist') do
               cp('ember.js', "#{app_vendor_path}/ember-#{new_sha}.js")
               cp('ember.min.js', "#{app_vendor_path}/ember-#{new_sha}.min.js")
@@ -74,7 +76,9 @@ module Embarista
           raise "Couldn't find current ember-data js version" if old_sha.nil?
           cd('../ember-data') do
             new_sha = `git rev-parse HEAD`.chomp
-            `bundle && bundle exec rake dist`
+            Bundler.with_clean_env do
+              `bundle && bundle exec rake dist`
+            end
             cd('./dist') do
               cp('ember-data.js', "#{app_vendor_path}/ember-data-#{new_sha}.js")
               cp('ember-data.min.js', "#{app_vendor_path}/ember-data-#{new_sha}.min.js")
