@@ -126,7 +126,7 @@ module Embarista
       end
 
       def define
-        task name, :manifest_id do |t, args|
+        set_current_task = task name, :manifest_id do |t, args|
           require 'redis'
 
           manifest_id = args[:manifest_id] || yapp_env
@@ -134,6 +134,7 @@ module Embarista
           puts "redis.set('#{app}:index:current', '#{manifest_id}')"
           redis.set("#{app}:index:current", manifest_id)
         end
+        set_current_task.add_description "Activates a manifest in the given YAPP_ENV"
       end
     end
 
@@ -189,7 +190,7 @@ module Embarista
       end
 
       def define
-        task name, :manifest_id do |t, args|
+        generate_index_task = task name, :manifest_id do |t, args|
           require 'redis'
 
           manifest_id = args[:manifest_id] || yapp_env
@@ -201,6 +202,7 @@ module Embarista
           puts "To preview: #{generator.preview_url(app)}"
           puts "To activate:  YAPP_ENV=#{yapp_env} rake \"deploy:set_current_index[#{manifest_id}]\""
         end
+        generate_index_task.add_description "Generate a manifest for the specified YAPP_ENV, run once with dev to boostrap environment"
       end
     end
   end
