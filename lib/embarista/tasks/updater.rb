@@ -22,7 +22,7 @@ module Embarista
       end
 
       def define
-        task name do |t, args|
+        update_ember_task = task name do |t, args|
           old_sha, new_sha = nil, nil
           regexp = /ember-([0-9a-f]{40})/
           app_vendor_path = File.expand_path("app/vendor")
@@ -51,6 +51,7 @@ module Embarista
           end
           puts "Updated from #{old_sha} to #{new_sha}"
         end
+        update_ember_task.add_description "Update Ember from a repo in ../ember.js"
       end
     end
 
@@ -64,7 +65,7 @@ module Embarista
       end
 
       def define
-        task name do |t, args|
+        update_ember_data_task = task name do |t, args|
           old_sha, new_sha = nil, nil
           regexp = /ember-data-([0-9a-f]{40})/
           app_vendor_path = File.expand_path("app/vendor")
@@ -93,6 +94,7 @@ module Embarista
           end
           puts "Updated from #{old_sha} to #{new_sha}"
         end
+        update_ember_data_task.add_description "Update Ember data from a repo in ../ember-data"
       end
     end
 
@@ -106,7 +108,7 @@ module Embarista
       end
 
       def define
-        task name do |t, args|
+        update_jquery_task = task name do |t, args|
           version = ENV['VERSION']
           raise "please supply VERSION env var to specify jQuery version" if version.nil?
           cd('./app/vendor') do
@@ -118,6 +120,7 @@ module Embarista
           Embarista::Updater.update_asset_file(%r{JQUERY_VERSION = '\d+\.\d+\.\d+'}, "JQUERY_VERSION = '#{version}'")
           puts "Updated to jQuery #{version}"
         end
+        update_jquery_task.add_description "Update jQuery to VERSION from code.jquery.com"
       end
     end
 
