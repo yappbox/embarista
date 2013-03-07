@@ -3,12 +3,6 @@ require 'rake/tasklib'
 
 module Embarista
   module DynamicIndex
-    # ENV.fetch does not behave as Hash#fetch,
-    # it fails to tell you which key failed.
-    def self.env_fetch(key)
-      ENV[key] or raise KeyError, "key not found: \"#{key}\""
-    end
-
     class Generator
       #TODO: remove YAPP reference
       attr_reader :env_config, :yapp_env, :manifest_id, :yapp_config
@@ -19,10 +13,10 @@ module Embarista
         @env_config = Yapp.load_config
 
         #TODO: remove YAPP reference
-        @yapp_env = Embarista::DynamicIndex.env_fetch('YAPP_ENV').to_sym
+        @yapp_env = (ENV['YAPP_ENV'] || 'dev').to_sym
 
         @yapp_config = env_config.fetch(@yapp_env)
-        @manifest_id = manifest_id || @yapp_env
+        @manifest_id = manifest_id || @yapp_env.to_s
         prepare_manifest
       end
 
@@ -87,7 +81,7 @@ module Embarista
       end
 
       def yapp_env
-        @yapp_env ||= Embarista::DynamicIndex.env_fetch('YAPP_ENV')
+        @yapp_env ||= (ENV['YAPP_ENV'] || 'dev')
       end
 
       def redis_url
@@ -151,7 +145,7 @@ module Embarista
       end
 
       def yapp_env
-        @yapp_env ||= Embarista::DynamicIndex.env_fetch('YAPP_ENV')
+        @yapp_env ||= (ENV['YAPP_ENV'] || 'dev')
       end
 
       def redis_url
