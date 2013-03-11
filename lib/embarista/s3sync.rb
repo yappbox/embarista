@@ -1,44 +1,18 @@
+require 'embarista/s3'
+
 module Embarista
   class S3sync
-    attr_reader :origin, :bucket_name, :pwd, :tmp_root, :local_manifest_path, :remote_manifest_path
+    attr_reader :local_manifest_path, :remote_manifest_path, :s3
 
-    def initialize(origin, options)
-      @bucket_name = options.fetch(:bucket_name)
-      @local_manifest_path = options[:local_manifest_path]
-      @remote_manifest_path = options[:remote_manifest_path]
-      aws_key = options.fetch(:aws_key)
-      aws_secret = options.fetch(:aws_secret)
-
-      @connection = AWS::S3::Base.establish_connection!(
-        :access_key_id     => aws_key,
-        :secret_access_key => aws_secret
-      )
-
-      @pwd = Pathname.new('').expand_path
-      @origin = origin
-      @tmp_root = @pwd + @origin
-      @age = options[:age] || 31556900
+    def initialize(root, opts={})
+      @local_manifest_path = opts[:local_manifest_path]
+      @remote_manifest_path = opts[:remote_manifest_path]
+      @root = Pathname.new(root).expand_path
+      @s3 = S3.new(opts.fetch(:bucket_name), root: root) 
     end
 
-    def self.sync(origin, options)
-      new(origin, options).sync
-    end
-
-    def store(name, file)
-      puts " -> #{name}"
-
-      opts = {
-        access: :public_read
-      }
-
-      if should_gzip?(name)
-        opts[:content_encoding] = 'gzip'
-      end
-
-      opts[:cache_control] = "max-age=#{@age.to_i}"
-      opts[:expires] = (Time.now + @age).httpdate
-
-      AWS::S3::S3Object.store(name, file, bucket_name, opts)
+    def self.sync(root, opts={})
+      new(root, opts).sync
     end
 
     def sync
@@ -50,43 +24,12 @@ module Embarista
       end
 
       delta_manifest.values.each do |file_name|
-        compressed_open(file_name) do |file|
-          store(file_name, file)
-        end
+        file_name[0] = ''
+        s3.store(file_name)
       end
 
-      open(local_manifest_path) do |file|
-        store(remote_manifest_file_name, file)
-        store(local_manifest_file_name, file)
-      end
-    end
-
-    def compressed_open(file_name)
-      if should_gzip?(file_name)
-        str_io = StringIO.new
-        open(tmp_root.to_s + file_name) do |f|
-          streaming_deflate(f, str_io)
-        end
-        str_io.reopen(str_io.string, "r")
-        yield str_io
-        str_io.close
-      else
-        open(tmp_root.to_s + file_name) do |f|
-          yield f
-        end
-      end
-    end
-
-    def streaming_deflate(source_io, target_io, buffer_size = 4 * 1024)
-      gz = Zlib::GzipWriter.new(target_io, Zlib::BEST_COMPRESSION)
-      while(string = source_io.read(buffer_size)) do
-        gz.write(string)
-      end
-      gz.close
-    end
-
-    def should_gzip?(name)
-      name =~ /\.css|\.js\Z/
+      s3.store(remote_manifest_file_name, local_manifest_path)
+      s3.store(local_manifest_file_name, local_manifest_path)
     end
 
     def remote_manifest_file_name
@@ -106,13 +49,18 @@ module Embarista
     end
 
     def remote_manifest
-      @remote_manifest ||= YAML.load(AWS::S3::S3Object.find(remote_manifest_file_name, bucket_name).value)
-    rescue AWS::S3::NoSuchKey
-      puts 'no remote existing manifest, uploading everything'
+      @remote_manifest ||= begin
+        if remote_manifest = s3.read(remote_manifest_file_name)
+          YAML.load(remote_manifest)
+        else
+          puts 'no remote existing manifest, uploading everything'
+          nil
+        end
+      end
     end
 
     def local_manifest
-      @local_manifest ||= YAML.load_file(local_manifest_path)
+      @local_manifest ||= YAML.load_file(@root + local_manifest_path)
     end
   end
 end
