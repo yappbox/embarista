@@ -7,22 +7,28 @@ module Embarista
 
     attr_reader :bucket_name, :age
 
-    def initialize(bucket_name, opts)
+    def initialize(bucket_name, opts={})
+      S3.connect
       @bucket_name = bucket_name
       @root = Pathname.new(opts[:root] || '').expand_path
       @age = opts[:age] || 31536000
     end
 
     def store(name, file_path=name, opts={})
-      path = @root + file_path
       opts[:access] ||= :public_read
-      opts[:cache_control] = "max-age=#{age.to_i}"
-      opts[:expires] = (Time.now + age).httpdate
-      should_gzip = SHOULD_GZIP.include?(path.extname)
-      opts[:content_encoding] = 'gzip' if should_gzip
-      open(path, should_gzip) do |io|
-        puts "#{bucket_name} -> #{name}"
-        ::AWS::S3::S3Object.store(name, io, bucket_name, opts)
+
+      puts "#{bucket_name} -> #{name}"
+      if file_path.is_a?(String)
+        opts[:cache_control] = "max-age=#{age.to_i}"
+        opts[:expires] = (Time.now + age).httpdate
+        path = @root + file_path
+        should_gzip = SHOULD_GZIP.include?(path.extname)
+        opts[:content_encoding] = 'gzip' if should_gzip
+        open(path, should_gzip) do |io|
+          ::AWS::S3::S3Object.store(name, io, bucket_name, opts)
+        end
+      else
+        ::AWS::S3::S3Object.store(name, file_path, bucket_name, opts)
       end
     end
 

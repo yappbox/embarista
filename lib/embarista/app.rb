@@ -25,6 +25,15 @@ module Embarista
         @assets_base_url ||= "//#{config.domains.assets_cdn}"
       end
 
+      def assets_bucket
+        # asset config is the same on qa and prod
+        @assets_bucket ||= config_by_env[:prod].s3.assets_bucket
+      end
+
+      def latest_manifest_id
+        File.read('tmp/public/LATEST_MANIFEST_ID').chomp rescue nil
+      end
+
       def heruku_app
         @heruku_app ||= case env
         when 'qa' then 'qa-yapp-cedar'

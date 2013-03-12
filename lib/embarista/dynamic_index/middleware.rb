@@ -5,7 +5,7 @@ module Embarista
         @app = app
         @erb_path = opts[:erb] || 'app/index.html.erb'
         @path_info = opts.fetch(:path_info)
-        @generator = Embarista::DynamicIndex::Generator.new(@erb_path, 'dev')
+        @generator = Embarista::DynamicIndex::Generator.generator(@erb_path, 'dev')
       end
 
       def call(env)

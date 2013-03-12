@@ -1,2 +1,6 @@
 require 'embarista/tasks/coffeelint'
 require 'embarista/tasks/updater'
+require 'embarista/tasks/assets'
+require 'embarista/tasks/generate_index'
+require 'embarista/tasks/generate_s3_index'
+require 'embarista/tasks/set_current_index'

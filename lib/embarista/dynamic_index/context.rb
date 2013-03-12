@@ -15,10 +15,9 @@ module Embarista
         assets_base_url + source
       end
 
-      def self.context(manifest_id=nil)
-        manifest_id ||= App.env.to_s
+      def self.context(manifest_id, assets_base_url=App.assets_base_url)
         manifest = load_manifest(manifest_id)
-        self.new(App.config, manifest_id, manifest, App.assets_base_url)
+        self.new(App.config, manifest_id, manifest, assets_base_url)
       end
 
       def self.load_manifest(manifest_id)

@@ -1,5 +1,3 @@
 require 'embarista/dynamic_index/context'
 require 'embarista/dynamic_index/generator'
 require 'embarista/dynamic_index/middleware'
-require 'embarista/dynamic_index/set_current_task'
-require 'embarista/dynamic_index/task'

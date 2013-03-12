@@ -19,14 +19,9 @@ module Embarista
     end
 
     def self.fetch_url
-      case ENV['YAPP_ENV']
-      when 'qa'
+      if App.heruku_app
         Bundler.with_clean_env do
-          `heroku config:get REDISTOGO_URL --app qa-yapp-cedar`.chomp
-        end
-      when 'prod'
-        Bundler.with_clean_env do
-          `heroku config:get REDISTOGO_URL --app yapp-cedar`.chomp
+          `heroku config:get REDISTOGO_URL --app #{App.heruku_app}`.chomp
         end
       else
         'redis://0.0.0.0:6379/'
