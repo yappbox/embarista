@@ -19,9 +19,9 @@ module Embarista
     end
 
     def self.fetch_url
-      if App.heruku_app
+      if App.heroku_app
         Bundler.with_clean_env do
-          `heroku config:get REDISTOGO_URL --app #{App.heruku_app}`.chomp
+          `heroku config:get REDISTOGO_URL --app #{App.heroku_app}`.chomp
         end
       else
         'redis://0.0.0.0:6379/'

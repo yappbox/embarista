@@ -34,10 +34,10 @@ module Embarista
         File.read('tmp/public/LATEST_MANIFEST_ID').chomp rescue nil
       end
 
-      def heruku_app
-        @heruku_app ||= case env
-        when 'qa' then 'qa-yapp-cedar'
-        when 'prod' then 'yapp-cedar'
+      def heroku_app
+        @heroku_app ||= case env
+        when :qa then 'qa-yapp-cedar'
+        when :prod then 'yapp-cedar'
         else nil
         end
       end
