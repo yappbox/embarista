@@ -7,7 +7,9 @@ describe Embarista::Filters::ManifestUrlFilter do
 <<-JS
 var a = manifest_url('baz.jpg');
 var b = manifest_url("baz/bar.jpg");
-var c = manifest_url("doesnt-exist.jpg");
+var c = manifest_url("baz/bar.jpg#bay");
+var d = manifest_url("baz/bar.jpg?#bay");
+var e = manifest_url("doesnt-exist.jpg");
 JS
   }
 
@@ -58,7 +60,9 @@ JS
     file.body.should eq(<<-JS)
 var a = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz-123abc.jpg');
 var b = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar-456def.jpg');
-var c = ('//' + YappEditorConfig.assetsCdn + '/editor/images/doesnt-exist.jpg');
+var c = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar-456def.jpg#bay');
+var d = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar-456def.jpg?#bay');
+var e = ('//' + YappEditorConfig.assetsCdn + '/editor/images/doesnt-exist.jpg');
 JS
     file.encoding.should eq('UTF-8')
   end
@@ -72,7 +76,9 @@ JS
     file.body.should eq(<<-JS)
 var a = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz.jpg');
 var b = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar.jpg');
-var c = ('//' + YappEditorConfig.assetsCdn + '/editor/images/doesnt-exist.jpg');
+var c = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar.jpg#bay');
+var d = ('//' + YappEditorConfig.assetsCdn + '/editor/images/baz/bar.jpg?#bay');
+var e = ('//' + YappEditorConfig.assetsCdn + '/editor/images/doesnt-exist.jpg');
 JS
     file.encoding.should eq('UTF-8')
   end

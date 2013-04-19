@@ -26,9 +26,21 @@ module Embarista
           code.gsub!(%r{\bmanifest_url\(\s*(["'/])([^"']+)\1\)}) do |m|
             quote_char = $1
             path = $2
+
+            # take the anchor/querystring off if there is one
+            post_path_start = path.index(/[?#]/)
+            if post_path_start
+              post_path = path[post_path_start..-1]
+              path = path[0..post_path_start-1]
+            end
+
             path = "/#{path}" unless path =~ %r{^/}
             path = "#{options[:prefix]}#{path}"
             resolved_path = urls_manifest[path] || path
+
+            # put the anchor/querystring back on, if there is one
+            resolved_path = resolved_path + post_path if post_path
+
             "(#{options[:prepend]}'#{resolved_path}')"
           end
           output.write(code)
