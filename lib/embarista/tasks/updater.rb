@@ -98,6 +98,32 @@ module Embarista
       end
     end
 
+    class UpdateQunitTask < ::Rake::TaskLib
+      attr_accessor :name
+
+      def initialize(name = :update_qunit)
+        @name = name
+        yield self if block_given?
+        define
+      end
+
+      def define
+        update_qunit_task = task name do |t, args|
+          version = ENV['VERSION']
+          raise "please supply VERSION env var to specify QUnit version (specify \"git\" for nightly)" if version.nil?
+          cd('./test/vendor') do
+            # remove old qunit
+            rm Dir['qunit-*.js']
+            rm Dir['qunit-*.css']
+            sh "curl -O http://code.jquery.com/qunit/qunit-#{version}.js"
+            sh "curl -O http://code.jquery.com/qunit/qunit-#{version}.css"
+          end
+          puts "Updated to QUnit #{version}"
+        end
+        update_qunit_task.add_description "Update QUnit to VERSION from code.jquery.com"
+      end
+    end
+
     class UpdateJqueryTask < ::Rake::TaskLib
       attr_accessor :name
 
