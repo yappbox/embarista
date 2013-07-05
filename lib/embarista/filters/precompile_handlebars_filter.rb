@@ -5,6 +5,7 @@ module Embarista
     class PrecompileHandlebarsFilter < Rake::Pipeline::Filter
       def initialize(options= {}, &block)
         @template_dir = options[:template_dir] || 'templates'
+        @templates_global = options[:templates_global] || 'Ember.TEMPLATES'
 
         super(&block)
         unless block_given?
@@ -23,7 +24,7 @@ module Embarista
           full_name = [dirname, name].compact.reject(&:empty?).join('/')
           compiled = Barber::Ember::FilePrecompiler.call(input.read)
 
-          output.write "\nEmber.TEMPLATES['#{full_name}'] = #{compiled};\n"
+          output.write "\n#{@templates_global}['#{full_name}'] = #{compiled};\n"
         end
       end
     end

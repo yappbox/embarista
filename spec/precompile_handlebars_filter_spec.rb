@@ -24,10 +24,12 @@ HBS
 
   let(:emberjs) { File.expand_path('../../vendor/ember.js', __FILE__) }
   let(:handlebarsjs) { File.expand_path('../../vendor/handlebars.js', __FILE__) }
-  let(:jquery_version) { '1.7.2' }
 
   let(:subject) {
-    filter = described_class.new(:emberjs => emberjs, :handlebarsjs => handlebarsjs, :jquery_version => jquery_version)
+    filter = described_class.new(:emberjs => emberjs,
+                                 :handlebarsjs => handlebarsjs,
+                                 :templates_global => 'Ember.TEMPLATES_BAZ'
+                                )
     filter.file_wrapper_class = file_wrapper_class
     filter.manifest = MemoryManifest.new
     filter.last_manifest = MemoryManifest.new
@@ -45,7 +47,7 @@ HBS
 
     file.should_not be_nil
     file.body.should_not be_nil
-    file.body.should match(/^Ember\.TEMPLATES\[\'bar\/foo\'\] = Ember\.Handlebars\.template\(.*\"Hello \".*\"foo\"/m)
+    file.body.should match(/^Ember\.TEMPLATES_BAZ\[\'bar\/foo\'\] = Ember\.Handlebars\.template\(.*\"Hello \".*\"foo\"/m)
     file.encoding.should eq('UTF-8')
   end
 end
