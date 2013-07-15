@@ -14,15 +14,19 @@ module Embarista
           code = input.read
           #puts input.path
           relative_root = Pathname.new(input.path).dirname
-          code.gsub!(%r{\brequire(All)?\s*\(\s*(["'/])([^"']+)\2\s*}) do |m|
-            optional_all = $1
-            quote_char = $2
-            before_path = $3
+          code.gsub!(%r{(?<!\.)\brequire\s*\(\s*["']([^"']+)["']\s*}) do |m|
+            before_path = $1
             path = before_path.dup
             path = relative_root.join(path).to_s if path.start_with?('.')
-            path.gsub!(%r{^#{options[:root]}/}, options[:prefix]) if options[:root]
-            #puts "require#{optional_all}: #{before_path} -> #{path}"
-            "minispade.require#{optional_all}(#{quote_char}#{path}#{quote_char}"
+            path = path.gsub(%r{^#{options[:root]}/}, '') if options[:root]
+            path = options[:prefix] + path if options[:prefix] && !path.include?(':')
+            # puts "require: #{before_path} -> #{path}"
+            "minispade.require('#{path}'"
+          end
+          code.gsub!(%r{(?<!\.)\brequireAll\s*\(([^)]+)\)}) do |m|
+            regex = $1
+            # puts "requireAll: #{regex}"
+            "minispade.requireAll(#{regex})"
           end
           output.write(code)
         end
