@@ -34,18 +34,18 @@ module Embarista
       match pattern, &JavascriptPipeline.new(opts)
     end
 
-    def sass_uncompressed(&block)
-      sass(:additional_load_paths => 'css',
-           :style => :expanded,
-           :line_comments => true,
-           &block)
+    def sass_uncompressed(options={}, &block)
+      options[:additional_load_paths] ||= 'css'
+      options[:style] = :expanded
+      options[:line_comments] = true
+      sass(options, &block)
     end
 
-    def sass_compressed(&block)
-      sass(:additional_load_paths => 'css',
-           :style => :compressed,
-           :line_comments => false,
-           &block)
+    def sass_compressed(options={}, &block)
+      options[:additional_load_paths] ||= 'css'
+      options[:style] = :compressed
+      options[:line_comments] = false
+      sass(options, &block)
     end
 
     # rename "qunit-*.css" => "qunit.css"
