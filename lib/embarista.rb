@@ -16,6 +16,10 @@ module Embarista
   autoload :SassFunctions,   'embarista/sass_functions'
   autoload :ManifestBuilder, 'embarista/manifest_builder'
   autoload :DynamicIndex,    'embarista/dynamic_index'
+
+  autoload :Precompiler,                   'embarista/precompiler'
+  autoload :PrecompilerError,              'embarista/precompiler'
+  autoload :PrecompilerConfigurationError, 'embarista/precompiler'
 end
 
 Rake::Pipeline::DSL::PipelineDSL.send(:include, Embarista::Helpers)
