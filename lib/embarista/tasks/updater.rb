@@ -40,12 +40,14 @@ module Embarista
             cd('./dist') do
               cp('ember.js', "#{app_vendor_path}/ember-#{new_sha}.js")
               cp('ember.min.js', "#{app_vendor_path}/ember-#{new_sha}.min.js")
+              cp('ember-template-compiler.js', "#{app_vendor_path}/ember-template-compiler-#{new_sha}.js")
             end
           end
           if old_sha != new_sha
             cd(app_vendor_path) do
               rm("ember-#{old_sha}.js")
               rm("ember-#{old_sha}.min.js")
+              rm("ember-template-compiler-#{old_sha}.js")
             end
             Embarista::Updater.update_asset_file(old_sha, new_sha)
           end
@@ -143,10 +145,38 @@ module Embarista
             sh "curl -O http://code.jquery.com/jquery-#{version}.js"
             sh "curl -O http://code.jquery.com/jquery-#{version}.min.js"
           end
-          Embarista::Updater.update_asset_file(%r{JQUERY_VERSION = '\d+\.\d+\.\d+'}, "JQUERY_VERSION = '#{version}'")
+          Embarista::Updater.update_asset_file(%r{JQUERY_VERSION = '[^']+'}, "JQUERY_VERSION = '#{version}'")
           puts "Updated to jQuery #{version}"
         end
         update_jquery_task.add_description "Update jQuery to VERSION from code.jquery.com"
+      end
+    end
+
+    class UpdateHandlebarsTask < ::Rake::TaskLib
+      attr_accessor :name
+
+      def initialize(name = :update_handlebars)
+        @name = name
+        yield self if block_given?
+        define
+      end
+
+      def define
+        update_handlebars_task = task name do |t, args|
+          version = ENV['VERSION']
+          raise "please supply VERSION env var to specify Handlebars version (specify \"git\" for nightly)" if version.nil?
+          cd('./app/vendor') do
+            # remove old qunit
+            rm Dir['handlebars-*.js']
+            rm Dir['handlebars.runtime-*.js']
+            sh "curl http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars-#{version}.js > handlebars-#{version}.js"
+            sh "curl http://builds.handlebarsjs.com.s3.amazonaws.com/handlebars.runtime-#{version}.js > handlebars.runtime-#{version}.js"
+            sh "uglifyjs < handlebars.runtime-#{version}.js > handlebars.runtime-#{version}.min.js"
+          end
+          Embarista::Updater.update_asset_file(%r{HANDLEBARS_VERSION = '[^']+'}, "HANDLEBARS_VERSION = '#{version}'")
+          puts "Updated to Handlebars #{version}"
+        end
+        update_handlebars_task.add_description "Update Handlebars to VERSION from github.com/wycats/handlebars.js"
       end
     end
 
