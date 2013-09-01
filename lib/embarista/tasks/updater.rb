@@ -100,6 +100,49 @@ module Embarista
       end
     end
 
+    class UpdateEmberStatesTask < ::Rake::TaskLib
+      attr_accessor :name
+
+      def initialize(name = :update_ember_states)
+        @name = name
+        yield self if block_given?
+        define
+      end
+
+      def define
+        update_ember_states_task = task name do |t, args|
+          old_sha, new_sha = nil, nil
+          regexp = /ember-states-([0-9a-f]{40})/
+          app_vendor_path = File.expand_path("app/vendor")
+          cd(app_vendor_path) do
+            old_filename = Dir['*'].grep(regexp)[0]
+            old_filename =~ regexp
+            old_sha = $1
+          end
+          raise "Couldn't find current ember-states js version" if old_sha.nil?
+          cd('../ember-states') do
+            new_sha = `git rev-parse HEAD`.chomp
+            Bundler.with_clean_env do
+              `bundle && bundle exec rake dist`
+            end
+            cd('./dist') do
+              cp('ember-states.js', "#{app_vendor_path}/ember-states-#{new_sha}.js")
+              cp('ember-states.min.js', "#{app_vendor_path}/ember-states-#{new_sha}.min.js")
+            end
+          end
+          if old_sha != new_sha
+            cd(app_vendor_path) do
+              rm("ember-states-#{old_sha}.js")
+              rm("ember-states-#{old_sha}.min.js")
+            end
+            Embarista::Updater.update_asset_file(old_sha, new_sha)
+          end
+          puts "Updated from #{old_sha} to #{new_sha}"
+        end
+        update_ember_states_task.add_description "Update Ember States from a repo in ../ember-states"
+      end
+    end
+
     class UpdateQunitTask < ::Rake::TaskLib
       attr_accessor :name
 
