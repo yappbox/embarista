@@ -1,6 +1,7 @@
 language: ruby
+cache: bundler
 rvm:
-  - 1.9.3-p327
+  - 2.0.0-p247
 bundler_args: --without docs
 notifications:
   tech@yapp.us
