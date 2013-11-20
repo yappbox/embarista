@@ -22,14 +22,13 @@ HBS
     Rake::Application.new
   }
 
-  let(:emberjs) { File.expand_path('../../vendor/ember.js', __FILE__) }
-  let(:handlebarsjs) { File.expand_path('../../vendor/handlebars.js', __FILE__) }
+  let(:ember_template_compiler) { File.expand_path('../../vendor/ember-template-compiler.js', __FILE__) }
+  let(:handlebars) { File.expand_path('../../vendor/handlebars.js', __FILE__) }
 
   let(:subject) {
-    filter = described_class.new(:emberjs => emberjs,
-                                 :handlebarsjs => handlebarsjs,
-                                 :templates_global => 'Ember.TEMPLATES_BAZ'
-                                )
+    filter = described_class.new(:handlebars => handlebars,
+                                 :ember_template_compiler => ember_template_compiler,
+                                 :templates_global => 'Ember.TEMPLATES_BAZ')
     filter.file_wrapper_class = file_wrapper_class
     filter.manifest = MemoryManifest.new
     filter.last_manifest = MemoryManifest.new
