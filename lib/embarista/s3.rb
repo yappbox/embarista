@@ -7,9 +7,8 @@ module Embarista
     SHOULD_GZIP = %w(.css .js)
 
     attr_reader :bucket_name, :age
-
     def initialize(bucket_name, opts={})
-      s3 = ::AWS::S3.new(access_key_id: ENV['YAPP_AWS_KEY'], secret_access_key: ENV['YAPP_AWS_SECRET'])
+      s3 = AWS::S3.new
       @bucket = s3.buckets[bucket_name]
       @root = Pathname.new(opts[:root] || '').expand_path
       @age = opts[:age] || 31536000
