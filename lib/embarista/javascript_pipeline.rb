@@ -15,16 +15,18 @@ module Embarista
           # puts "module_id: #{module_id}"
           module_id
         }
-        rewrite_minispade_requires(root: options[:root], prefix: options[:prefix])
+        unless options[:es6]
+          rewrite_minispade_requires(root: options[:root], prefix: options[:prefix])
+        end
         concat { |path| ["#{path}.prod", "#{path}.dev"] }
         match "**/*.js.prod" do
           strip_ember_asserts
+          make_module(string: true, module_id_generator: module_id_generator, es6: options[:es6])
           uglify(copyright: false) {|input| input}
-          minispade(string: true, module_id_generator: module_id_generator)
           concat { Array(options[:concat]).map{|path| path.gsub(/\.js$/, '.min.js')} }
         end
         match "**/*.js.dev" do
-          minispade :module_id_generator => module_id_generator
+          make_module(module_id_generator: module_id_generator, es6: options[:es6])
           concat { Array(options[:concat]) }
         end
       end

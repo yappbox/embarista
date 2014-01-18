@@ -4,6 +4,7 @@ module Embarista
       def initialize(options={}, &block)
         @template_dir = options[:template_dir] || 'templates'
         @templates_global = options[:templates_global] || 'Ember.TEMPLATES'
+        @es6 = options[:es6]
 
         options[:handlebars] ||= default_handlebars_src
         options[:ember_template_compiler] ||= default_ember_template_compiler_src
@@ -30,7 +31,11 @@ module Embarista
           full_name = [dirname, name].compact.reject(&:empty?).join('/')
           compiled = precompile(input.read, @handlebars_src, @ember_template_compiler_src)
 
-          output.write "\n#{@templates_global}['#{full_name}'] = #{compiled};\n"
+          if @es6
+            output.write "\nexport default #{compiled};\n"
+          else
+            output.write "\n#{@templates_global}['#{full_name}'] = #{compiled};\n"
+          end
         end
       end
 

@@ -56,6 +56,10 @@ module Embarista
         end
       end
     end
+
+    def make_module(*args, &block)
+      filter(Embarista::Filters::MakeModuleFilter, *args, &block)
+    end
   end
 end
 

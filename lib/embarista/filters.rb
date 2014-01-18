@@ -7,5 +7,6 @@ module Embarista
     autoload :PrecompileHandlebarsFilter,     'embarista/filters/precompile_handlebars_filter'
     autoload :RewriteMinispadeRequiresFilter, 'embarista/filters/rewrite_minispade_requires_filter'
     autoload :StripEmberAssertsFilter,        'embarista/filters/strip_ember_asserts_filter'
+    autoload :MakeModuleFilter,               'embarista/filters/make_module_filter'
   end
 end
