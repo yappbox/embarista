@@ -1,10 +1,13 @@
 require 'aws-sdk'
 require 'zopfli'
+require 'mime-types'
 
 module Embarista
   # Simple interface for S3
   class S3
-    SHOULD_GZIP = %w(.css .js)
+    SHOULD_ADD_CHARSET_UTF8 = %w(.js .css .html .json .xml)
+    SHOULD_GZIP_BINARY = %w(.ttf .eot .otf)
+    SHOULD_GZIP_ENCODING = %w(8bit 7bit quoted-printable)
 
     attr_reader :bucket_name, :age
     def initialize(bucket_name, opts={})
@@ -23,7 +26,13 @@ module Embarista
         opts[:cache_control] = "max-age=#{age.to_i}"
         opts[:expires] = (Time.now + age).httpdate
         path = @root + file_path
-        if SHOULD_GZIP.include?(path.extname)
+        ext = path.extname
+        mime_type = MIME::Types.type_for(ext).first
+        opts[:content_type] = mime_type.to_s
+        if SHOULD_ADD_CHARSET_UTF8
+          opts[:content_type] += '; charset=utf-8'
+        end
+        if SHOULD_GZIP_ENCODING.include?(mime_type.encoding) or SHOULD_GZIP_BINARY.include?(ext)
           opts[:content_encoding] = 'gzip'
           s3_object.write(Zopfli.deflate(path.read, format: :gzip), opts)
         else

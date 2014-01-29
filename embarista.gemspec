@@ -22,6 +22,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "colored"
   gem.add_dependency "aws-sdk"
   gem.add_dependency "zopfli"
+  gem.add_dependency "mime-types"
 
   gem.add_development_dependency "rspec"
   gem.add_development_dependency "rb-readline"
