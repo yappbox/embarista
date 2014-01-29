@@ -1,6 +1,7 @@
 require 'aws-sdk'
 require 'zopfli'
 require 'mime-types'
+require 'open-uri'
 
 module Embarista
   # Simple interface for S3
@@ -43,8 +44,13 @@ module Embarista
       end
     end
 
-    def read(name)
-      @bucket.objects[name].read
+    def read(name, &block)
+      url = @bucket.objects[name].url_for(:read)
+      if block_given?
+        open(url, &block)
+      else
+        open(url) {|io| io.read }
+      end
     rescue ::AWS::S3::Errors::NoSuchKey
       nil
     end
