@@ -9,7 +9,7 @@ module Embarista
     SHOULD_ADD_CHARSET_UTF8 = %w(.js .css .html .json .xml)
     SHOULD_GZIP_BINARY = %w(.ttf .eot .otf)
     SHOULD_GZIP_ENCODING = %w(8bit 7bit quoted-printable)
-    DEFAULT_MIME_TYPE = MIME::Types['application/octet-stream']
+    DEFAULT_MIME_TYPE = MIME::Types['application/octet-stream'].first
 
     attr_reader :bucket_name, :age
     def initialize(bucket_name, opts={})
