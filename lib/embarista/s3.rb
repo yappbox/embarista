@@ -29,7 +29,7 @@ module Embarista
         ext = path.extname
         mime_type = MIME::Types.type_for(ext).first
         opts[:content_type] = mime_type.to_s
-        if SHOULD_ADD_CHARSET_UTF8
+        if SHOULD_ADD_CHARSET_UTF8.include?(ext)
           opts[:content_type] += '; charset=utf-8'
         end
         if SHOULD_GZIP_ENCODING.include?(mime_type.encoding) or SHOULD_GZIP_BINARY.include?(ext)
