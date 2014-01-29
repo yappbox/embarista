@@ -9,6 +9,7 @@ module Embarista
     SHOULD_ADD_CHARSET_UTF8 = %w(.js .css .html .json .xml)
     SHOULD_GZIP_BINARY = %w(.ttf .eot .otf)
     SHOULD_GZIP_ENCODING = %w(8bit 7bit quoted-printable)
+    DEFAULT_MIME_TYPE = MIME::Types['application/octet-stream']
 
     attr_reader :bucket_name, :age
     def initialize(bucket_name, opts={})
@@ -28,7 +29,7 @@ module Embarista
         opts[:expires] = (Time.now + age).httpdate
         path = @root + file_path
         ext = path.extname
-        mime_type = MIME::Types.type_for(ext).first
+        mime_type = MIME::Types.type_for(ext).first || DEFAULT_MIME_TYPE
         opts[:content_type] = mime_type.to_s
         if SHOULD_ADD_CHARSET_UTF8.include?(ext)
           opts[:content_type] += '; charset=utf-8'
