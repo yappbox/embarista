@@ -1,6 +1,6 @@
 require 'aws-sdk'
 require 'zopfli'
-require 'mime-types'
+require 'mime/types'
 require 'open-uri'
 
 module Embarista
