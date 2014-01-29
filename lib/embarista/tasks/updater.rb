@@ -80,7 +80,7 @@ module Embarista
           cd('../ember-data') do
             new_sha = `git rev-parse HEAD`.chomp
             Bundler.with_clean_env do
-              `bundle && bundle exec rake dist`
+              `npm install; ./node_modules/.bin/grunt dist`
             end
             cd('./dist') do
               cp('ember-data.js', "#{app_vendor_path}/ember-data-#{new_sha}.js")
