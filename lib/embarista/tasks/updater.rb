@@ -24,7 +24,7 @@ module Embarista
       def define
         update_ember_task = task name do |t, args|
           old_sha, new_sha = nil, nil
-          regexp = /ember-([0-9a-f]{40})/
+          regexp = /ember-([0-9a-f]{4,40})/
           app_vendor_path = File.expand_path("app/vendor")
           cd(app_vendor_path) do
             old_filename = Dir['*'].grep(regexp)[0]
@@ -69,7 +69,7 @@ module Embarista
       def define
         update_ember_data_task = task name do |t, args|
           old_sha, new_sha = nil, nil
-          regexp = /ember-data-([0-9a-f]{40})/
+          regexp = /ember-data-([0-9a-f]{4,40})/
           app_vendor_path = File.expand_path("app/vendor")
           cd(app_vendor_path) do
             old_filename = Dir['*'].grep(regexp)[0]
