@@ -1,4 +1,5 @@
 require 'uri'
+require 'timeout'
 
 module Embarista
   module Redis
@@ -21,7 +22,9 @@ module Embarista
     def self.fetch_url
       if App.heroku_app
         Bundler.with_clean_env do
-          `heroku config:get REDISTOGO_URL --app #{App.heroku_app}`.chomp
+          Timeout::timeout(30) do
+            `heroku config:get REDISTOGO_URL --app #{App.heroku_app}`.chomp
+          end
         end
       else
         'redis://0.0.0.0:6379/'
