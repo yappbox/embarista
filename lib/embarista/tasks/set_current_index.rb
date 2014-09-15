@@ -22,10 +22,29 @@ module Embarista
       set_current_task = task(name, :manifest_id) do |t, args|
         manifest_id = args[:manifest_id] || App.env.to_s
 
-        puts "redis.set('#{app}:#{key}:current', '#{manifest_id}')"
-        redis.set("#{app}:#{key}:current", manifest_id)
+        manifest_key = prefix(manifest_id)
+        unless redis.exists(manifest_key)
+          raise "manifest key '#{manifest_key}' does not exist"
+        end
+
+        current_key = prefix('current')
+        previous_key = prefix('previous')
+
+        current_id = redis.get(current_key)
+        if current_id
+          puts "setting #{current_key} to #{manifest_id} from #{current_id}"
+          redis.lpush(previous_key, previous_id)
+          redis.set(current_key, manifest_id)
+        else
+          puts "setting #{current_key} to #{manifest_id}"
+          redis.set(current_key, manifest_id)
+        end
       end
       set_current_task.add_description "Activates a manifest in the given #{App.env_var}"
+    end
+
+    def prefix(id)
+      "#{app}:#{key}:#{id}"
     end
   end
 end
