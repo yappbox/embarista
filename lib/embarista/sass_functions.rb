@@ -13,7 +13,7 @@ module Embarista
   private
 
     def manifest
-      @_manifest ||= begin
+      @@_manifest ||= begin
         # TODO: some switch so that this doesn't run in dev?
         manifest_path = 'public/manifest.yml'
         return {} unless File.exist?(manifest_path)
