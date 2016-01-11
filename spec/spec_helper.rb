@@ -3,11 +3,14 @@ require 'fileutils'
 
 require "spec_helpers/memory_file_wrapper"
 require "spec_helpers/memory_manifest"
+require 'rspec/its'
 
 RSpec.configure do |config|
   original = Dir.pwd
 
   config.include FileUtils
+
+  config.expect_with(:rspec) { |c| c.syntax = :should }
 
   def tmp
     File.expand_path("../tmp", __FILE__)

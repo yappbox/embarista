@@ -53,20 +53,20 @@ CONTENT
 
 
       subject.add('public/foo/bar/hello.txt')
-      File.exist?('tmp/public/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt').should be_true
+      File.exist?('tmp/public/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt').should eq(true)
       subject.manifest.should == {
         '/foo/bar/hello.txt' => '/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt'
       }
 
       subject.add('public/foo/baz/goodbye.txt')
-      File.exist?('tmp/public/foo/baz/goodbye-8dcca69d946ae9576734c2c91dfddec4.txt').should be_true
+      File.exist?('tmp/public/foo/baz/goodbye-8dcca69d946ae9576734c2c91dfddec4.txt').should eq(true)
       subject.manifest.should == {
         '/foo/bar/hello.txt' => '/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt',
         '/foo/baz/goodbye.txt' => '/foo/baz/goodbye-8dcca69d946ae9576734c2c91dfddec4.txt'
       }
 
       subject.add('images/foo.png', 'editor/images/foo.png')
-      File.exist?('tmp/public/editor/images/foo-4802fcebd761ca4f04c9a6320330fd10.png').should be_true
+      File.exist?('tmp/public/editor/images/foo-4802fcebd761ca4f04c9a6320330fd10.png').should eq(true)
       subject.manifest.should == {
         '/foo/bar/hello.txt' => '/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt',
         '/foo/baz/goodbye.txt' => '/foo/baz/goodbye-8dcca69d946ae9576734c2c91dfddec4.txt',
