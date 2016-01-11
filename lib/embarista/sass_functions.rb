@@ -2,7 +2,7 @@ module Embarista
   module SassFunctions
     def manifest_url(path)
       digested_path = lookup_manifest_path(path.value)
-      Sass::Script::String.new("url(#{digested_path})")
+      Sass::Script::String.new("url(#{URI.encode(digested_path)})")
     end
 
     def manifest_path(path)
