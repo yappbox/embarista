@@ -35,8 +35,8 @@ module Embarista
       mkdir_p versioned_full_path.dirname
       cp full_path, versioned_full_path
 
-      http_path =           '/' + path_from_document_root.to_s
-      versioned_http_path = '/' + versioned_path_from_document_root.to_s
+      http_path =           '/' + URI.encode(path_from_document_root.to_s)
+      versioned_http_path = '/' + URI.encode(versioned_path_from_document_root.to_s)
 
       manifest[http_path] = versioned_http_path
     end

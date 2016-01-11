@@ -41,6 +41,9 @@ CONTENT
       make_file('public/foo/baz/goodbye.txt', <<-CONTENT)
 Goodbye Cruel World...
 CONTENT
+      make_file('public/foo/baz/Name With Spaces.png', <<-CONTENT)
+another image
+CONTENT
       make_file('images/foo.png', <<-CONTENT
 image
 CONTENT
@@ -71,6 +74,15 @@ CONTENT
         '/foo/bar/hello.txt' => '/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt',
         '/foo/baz/goodbye.txt' => '/foo/baz/goodbye-8dcca69d946ae9576734c2c91dfddec4.txt',
         '/editor/images/foo.png' => '/editor/images/foo-4802fcebd761ca4f04c9a6320330fd10.png'
+      }
+
+      subject.add('public/foo/baz/Name With Spaces.png')
+      File.exist?('tmp/public/foo/baz/Name With Spaces-147a09c8e7f061986ce3edfc920e9e0f.png').should eq(true)
+      subject.manifest.should == {
+        '/foo/bar/hello.txt' => '/foo/bar/hello-8ddd8be4b179a529afa5f2ffae4b9858.txt',
+        '/foo/baz/goodbye.txt' => '/foo/baz/goodbye-8dcca69d946ae9576734c2c91dfddec4.txt',
+        '/editor/images/foo.png' => '/editor/images/foo-4802fcebd761ca4f04c9a6320330fd10.png',
+        '/foo/baz/Name%20With%20Spaces.png' => '/foo/baz/Name%20With%20Spaces-147a09c8e7f061986ce3edfc920e9e0f.png'
       }
     end
   end
