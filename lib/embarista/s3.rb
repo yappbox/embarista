@@ -13,21 +13,21 @@ module Embarista
 
     attr_reader :bucket_name, :age
     def initialize(bucket_name, opts={})
-      s3 = AWS::S3.new
-      @bucket = s3.buckets[bucket_name]
+      s3 = Aws::S3::Resource.new
+      @bucket = s3.bucket(bucket_name)
       @root = Pathname.new(opts[:root] || '').expand_path
       @age = opts[:age] || 31536000
     end
 
-    def store(name, file_path=name, opts={})
-      opts[:acl] ||= :public_read
+    def store(name, file_or_path=name, opts={})
+      opts[:acl] ||= 'public-read'
 
       puts "#{bucket_name} -> #{name}"
-      s3_object = @bucket.objects[name]
-      if file_path.is_a?(String)
+      s3_object = @bucket.object(name)
+      if file_or_path.is_a?(String)
         opts[:cache_control] = "max-age=#{age.to_i}"
         opts[:expires] = (Time.now + age).httpdate
-        path = @root + file_path
+        path = @root + file_or_path
         ext = path.extname
         mime_type = MIME::Types.type_for(ext).first || DEFAULT_MIME_TYPE
         opts[:content_type] = mime_type.to_s
@@ -36,17 +36,17 @@ module Embarista
         end
         if SHOULD_GZIP_ENCODING.include?(mime_type.encoding) or SHOULD_GZIP_BINARY.include?(ext)
           opts[:content_encoding] = 'gzip'
-          s3_object.write(Zopfli.deflate(path.read, format: :gzip), opts)
+          s3_object.put(Zopfli.deflate(path.read, format: :gzip), opts)
         else
-          s3_object.write(path, opts)
+          s3_object.put(path.read, opts)
         end
       else
-        s3_object.write(file_path, opts)
+        s3_object.put(file_or_path, opts)
       end
     end
 
     def read(name, &block)
-      url = @bucket.objects[name].url_for(:read)
+      url = @bucket.object(name).public_url
       if block_given?
         open(url, &block)
       else
