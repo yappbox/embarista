@@ -36,12 +36,12 @@ module Embarista
         end
         if SHOULD_GZIP_ENCODING.include?(mime_type.encoding) or SHOULD_GZIP_BINARY.include?(ext)
           opts[:content_encoding] = 'gzip'
-          s3_object.put(Zopfli.deflate(path.read, format: :gzip), opts)
+          s3_object.put(opts.merge(body: Zopfli.deflate(path.read, format: :gzip)))
         else
-          s3_object.put(path.read, opts)
+          s3_object.put(opts.merge(body: path.read))
         end
       else
-        s3_object.put(file_or_path, opts)
+        s3_object.put(opts.merge(body: file_or_path))
       end
     end
 
