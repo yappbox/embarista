@@ -18,7 +18,7 @@ Gem::Specification.new do |gem|
   gem.add_dependency "rake-pipeline-web-filters", '>= 0.6.0'
   gem.add_dependency "execjs"
   gem.add_dependency "colored"
-  gem.add_dependency "aws-sdk", '~> 2'
+  gem.add_dependency "aws-sdk-s3", '~> 1'
   gem.add_dependency "zopfli"
   gem.add_dependency "mime-types"
 

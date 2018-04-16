@@ -1,4 +1,4 @@
-require 'aws-sdk'
+require 'aws-sdk-s3'
 require 'zopfli'
 require 'mime/types'
 require 'open-uri'
